@@ -1,0 +1,1406 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Etalase Animasi Karanjang</title>
+
+  <style>
+    :root {
+      --green-main: #1d9a5a;
+      --green-soft: #e5f7ee;
+      --green-dark: #127343;
+      --white: #ffffff;
+      --shadow-soft: 0 10px 25px rgba(0, 0, 0, 0.08);
+      --radius: 16px;
+      --transition: 0.25s ease;
+      --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: linear-gradient(to bottom, var(--green-soft), #f8fffb);
+      color: #222;
+      min-height: 100vh;
+    }
+
+    /* LOGIN GATE */
+
+    .gate {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(29,154,90,0.16), transparent),
+                  radial-gradient(circle at bottom right, rgba(18,115,67,0.16), transparent),
+                  #f8fffb;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 200;
+    }
+
+    .gate-card {
+      width: 100%;
+      max-width: 420px;
+      background: var(--white);
+      border-radius: 20px;
+      padding: 18px 16px 14px;
+      box-shadow: 0 22px 55px rgba(0,0,0,0.18);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .gate-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .gate-logo {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: var(--green-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+      font-size: 18px;
+    }
+
+    .gate-title-wrap {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .gate-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .gate-sub {
+      font-size: 10px;
+      color: #777;
+    }
+
+    .gate-info {
+      font-size: 10px;
+      color: #555;
+      margin-top: 2px;
+    }
+
+    .gate-info strong {
+      color: var(--green-dark);
+    }
+
+    .gate-form {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .gate-label {
+      font-size: 9px;
+      color: #555;
+      margin-bottom: 1px;
+    }
+
+    .gate-input {
+      width: 100%;
+      padding: 7px 9px;
+      border-radius: 10px;
+      border: 1px solid rgba(0,0,0,0.12);
+      font-size: 10px;
+      outline: none;
+      transition: var(--transition);
+      background: #f9fffb;
+    }
+
+    .gate-input:focus {
+      border-color: var(--green-main);
+      box-shadow: 0 0 0 1px rgba(29,154,90,0.12);
+      background: #ffffff;
+    }
+
+    .gate-note {
+      font-size: 8px;
+      color: #888;
+      margin-top: -2px;
+    }
+
+    .gate-btn {
+      margin-top: 4px;
+      padding: 7px 10px;
+      border-radius: 999px;
+      border: none;
+      background: var(--green-main);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+      transition: var(--transition);
+    }
+
+    .gate-btn:hover {
+      background: var(--green-dark);
+      transform: translateY(-1px);
+    }
+
+    .gate-wa {
+      margin-top: 4px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border-radius: 999px;
+      background: #e5f7ee;
+      font-size: 9px;
+      color: var(--green-dark);
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      width: fit-content;
+    }
+
+    .gate-wa:hover {
+      background: var(--green-main);
+      color: #fff;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.16);
+    }
+
+    .gate-wa span.small {
+      font-size: 8px;
+      opacity: 0.9;
+    }
+
+    .gate-error {
+      font-size: 8px;
+      color: #d9534f;
+      margin-top: 2px;
+      display: none;
+    }
+
+    /* WRAPPER APP */
+
+    #app {
+      display: none;
+    }
+
+    /* LOGIN SUCCESS BANNER */
+
+    .login-success {
+      position: fixed;
+      top: 14px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      padding: 9px 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #1d9a5a, #20c172);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 600;
+      box-shadow: 0 16px 40px rgba(0,0,0,0.22);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      opacity: 0;
+      z-index: 180;
+      pointer-events: none;
+    }
+
+    .login-success span.icon {
+      font-size: 15px;
+    }
+
+    .login-success.show {
+      animation: loginSuccessFade 2.3s ease-out forwards;
+    }
+
+    @keyframes loginSuccessFade {
+      0% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-20px) scale(0.96);
+      }
+      20% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      75% {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0) scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: translateX(-50%) translateY(-10px) scale(0.98);
+      }
+    }
+
+    /* HEADER */
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(255, 255, 255, 0.9);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .nav {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-logo {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: var(--green-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--white);
+      font-weight: 700;
+      box-shadow: var(--shadow-soft);
+      font-size: 18px;
+    }
+
+    .brand-text {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.1;
+    }
+
+    .brand-text span:first-child {
+      font-weight: 700;
+      font-size: 17px;
+      color: var(--green-dark);
+    }
+
+    .brand-text span:last-child {
+      font-size: 11px;
+      color: #666;
+    }
+
+    .cart-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cart-label {
+      font-size: 11px;
+      color: #777;
+    }
+
+    .cart {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-soft);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .cart:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
+    }
+
+    .cart::before {
+      content: "🛒";
+      font-size: 19px;
+    }
+
+    .cart-count {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
+      background: var(--green-main);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart.animate {
+      animation: cart-bounce 0.5s ease;
+    }
+
+    @keyframes cart-bounce {
+      0% { transform: translateY(0) scale(1); }
+      30% { transform: translateY(-5px) scale(1.1); }
+      60% { transform: translateY(3px) scale(0.96); }
+      100% { transform: translateY(0) scale(1); }
+    }
+
+    /* HERO */
+
+    .hero {
+      max-width: 1180px;
+      margin: 18px auto 10px;
+      padding: 0 18px 10px;
+      display: grid;
+      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr);
+      gap: 18px;
+      align-items: center;
+    }
+
+    .hero h1 {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--green-dark);
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      font-size: 13px;
+      color: #555;
+      max-width: 460px;
+    }
+
+    .hero-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 10px;
+      padding: 5px 8px;
+      border-radius: 999px;
+      background: rgba(29, 154, 90, 0.06);
+      color: var(--green-dark);
+      margin-bottom: 5px;
+    }
+
+    .hero-right {
+      justify-self: end;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      font-size: 10px;
+      color: #666;
+    }
+
+    .hero-pill {
+      padding: 8px 11px;
+      border-radius: 14px;
+      background: var(--white);
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 170px;
+    }
+
+    .hero-pill-title {
+      font-size: 11px;
+      color: var(--green-dark);
+      font-weight: 700;
+    }
+
+    .hero-pill p {
+      font-size: 9px;
+      color: #555;
+    }
+
+    /* PRODUCT GRID */
+
+    .content {
+      max-width: 1180px;
+      margin: 0 auto 80px;
+      padding: 0 18px 24px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+
+    .section-title h2 {
+      font-size: 17px;
+      color: var(--green-dark);
+      font-weight: 700;
+    }
+
+    .section-title span {
+      font-size: 10px;
+      color: #777;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .product-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 10px;
+      box-shadow: var(--shadow-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      position: relative;
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .product-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom right, rgba(29, 154, 90, 0.04), transparent);
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
+    }
+
+    .product-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 16px 34px rgba(0, 0, 0, 0.14);
+    }
+
+    .product-card:hover::before {
+      opacity: 1;
+    }
+
+    .product-label {
+      font-size: 8px;
+      padding: 3px 6px;
+      width: fit-content;
+      border-radius: 999px;
+      background: var(--green-soft);
+      color: var(--green-dark);
+      font-weight: 600;
+    }
+
+    .product-name {
+      font-size: 13px;
+      font-weight: 700;
+      color: #222;
+    }
+
+    .product-desc {
+      font-size: 9px;
+      color: #666;
+      line-height: 1.5;
+      min-height: 34px;
+    }
+
+    .product-price {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--green-dark);
+    }
+
+    .product-price span {
+      font-size: 9px;
+      font-weight: 400;
+      color: #888;
+      text-decoration: line-through;
+      margin-left: 4px;
+    }
+
+    .product-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .btn-buy {
+      flex: 1;
+      padding: 6px 8px;
+      border-radius: 999px;
+      border: none;
+      background: var(--green-main);
+      color: var(--white);
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      box-shadow: 0 8px 18px rgba(29, 154, 90, 0.35);
+      transition: var(--transition);
+    }
+
+    .btn-buy span.icon {
+      font-size: 11px;
+    }
+
+    .btn-buy:hover {
+      background: var(--green-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 22px rgba(29, 154, 90, 0.45);
+    }
+
+    .btn-view {
+      padding: 5px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      background: var(--white);
+      font-size: 9px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      color: #555;
+      transition: var(--transition);
+      white-space: nowrap;
+    }
+
+    .btn-view:hover {
+      background: var(--green-soft);
+      color: var(--green-dark);
+    }
+
+    /* TOAST */
+
+    .toast {
+      position: fixed;
+      right: 18px;
+      bottom: 80px;
+      padding: 9px 11px;
+      background: var(--green-dark);
+      color: var(--white);
+      font-size: 10px;
+      border-radius: 999px;
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.24);
+      opacity: 0;
+      transform: translateY(10px);
+      pointer-events: none;
+      transition: 0.25s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      z-index: 99;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* CHECKOUT BAR */
+
+    .checkout-bar {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      padding: 9px 14px;
+      background: var(--white);
+      border-radius: 999px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.18);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      z-index: 90;
+      border: 1px solid rgba(0, 0, 0, 0.04);
+    }
+
+    .checkout-bar span.label {
+      font-size: 10px;
+      color: #555;
+    }
+
+    .checkout-bar span.total {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .checkout-bar .cta {
+      font-size: 10px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: var(--green-main);
+      color: var(--white);
+      font-weight: 600;
+    }
+
+    /* CHECKOUT MODAL */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.26);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal {
+      background: var(--white);
+      border-radius: 18px;
+      padding: 14px 14px 10px;
+      max-width: 420px;
+      width: 100%;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .modal-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .modal-sub {
+      font-size: 9px;
+      color: #777;
+    }
+
+    .modal-close {
+      border: none;
+      background: transparent;
+      font-size: 16px;
+      cursor: pointer;
+      color: #999;
+    }
+
+    .cart-items {
+      max-height: 160px;
+      overflow-y: auto;
+      padding-right: 4px;
+      border-radius: 10px;
+      background: #f8fffb;
+      padding: 6px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 9px;
+    }
+
+    .cart-item-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .cart-item-name {
+      color: #333;
+    }
+
+    .cart-item-price {
+      font-weight: 600;
+      color: var(--green-dark);
+    }
+
+    .cart-empty {
+      font-size: 9px;
+      color: #888;
+      text-align: center;
+      padding: 8px 0;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      margin-top: 2px;
+      color: #333;
+    }
+
+    .cart-total span:last-child {
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .payment-section {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 9px;
+    }
+
+    .payment-label {
+      font-size: 9px;
+      font-weight: 600;
+      color: #444;
+    }
+
+    .payment-options {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 2px;
+    }
+
+    .payment-option {
+      flex: 1;
+      border-radius: 10px;
+      padding: 6px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      align-items: flex-start;
+      transition: var(--transition);
+      background: #ffffff;
+    }
+
+    .payment-option span.title {
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--green-dark);
+    }
+
+    .payment-option span.desc {
+      font-size: 8px;
+      color: #777;
+    }
+
+    .payment-option.active {
+      border-color: var(--green-main);
+      box-shadow: 0 6px 16px rgba(29, 154, 90, 0.18);
+      background: var(--green-soft);
+    }
+
+    .payment-detail {
+      border-radius: 10px;
+      padding: 6px;
+      background: #f8fffb;
+      font-size: 8px;
+      color: #555;
+      display: none;
+      gap: 4px;
+      flex-direction: column;
+    }
+
+    .payment-detail.show {
+      display: flex;
+    }
+
+    .qris-box {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      border-radius: 10px;
+      border: 1px dashed rgba(0, 0, 0, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 8px;
+      text-align: center;
+      padding: 6px;
+      background: var(--white);
+    }
+
+    .copy-text {
+      font-size: 8px;
+      padding: 3px 6px;
+      border-radius: 999px;
+      border: 1px solid rgba(0, 0, 0, 0.12);
+      cursor: pointer;
+      width: fit-content;
+      margin-top: 2px;
+    }
+
+    .confirm-note {
+      font-size: 8px;
+      color: #777;
+      margin-top: 2px;
+    }
+
+    .wa-confirm-btn {
+      margin-top: 4px;
+      align-self: flex-start;
+      font-size: 9px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      border: none;
+      background: var(--green-main);
+      color: #fff;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18);
+    }
+
+    @media (max-width: 768px) {
+      .hero {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .hero-right {
+        align-items: flex-start;
+      }
+      .modal {
+        max-width: 92%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- LOGIN SUCCESS BANNER -->
+  <div class="login-success" id="loginSuccess">
+    <span class="icon">✅</span>
+    <span>Login Berhasil — Selamat Berbelanja di Karanjang</span>
+  </div>
+
+  <!-- LOGIN GATE -->
+  <div class="gate" id="gate">
+    <div class="gate-card">
+      <div class="gate-brand">
+        <div class="gate-logo">K</div>
+        <div class="gate-title-wrap">
+          <div class="gate-title">Karanjang Access Lock</div>
+          <div class="gate-sub">Silakan daftar & masuk untuk melihat etalase.</div>
+        </div>
+      </div>
+      <div class="gate-info">
+        Halaman ini hanya dapat diakses oleh member yang memiliki <strong>kode akses resmi</strong> dari Admin.
+      </div>
+
+      <div class="gate-form">
+        <div>
+          <div class="gate-label">Nama Lengkap</div>
+          <input type="text" id="gateName" class="gate-input" placeholder="Masukkan nama anda" />
+        </div>
+        <div>
+          <div class="gate-label">Nomor WhatsApp</div>
+          <input type="tel" id="gateWa" class="gate-input" placeholder="Contoh: 08xxxxxxxxxx" />
+        </div>
+        <div>
+          <div class="gate-label">Kode Akses Web</div>
+          <input type="password" id="gateCode" class="gate-input" placeholder="Masukkan kode dari Admin" />
+          <div class="gate-note">
+            Login hanya menggunakan kode yang diberikan Admin. Minta kode jika belum memiliki.
+          </div>
+        </div>
+        <div id="gateError" class="gate-error">
+          Data belum lengkap atau kode akses salah. Silakan cek kembali atau minta kode ke Admin.
+        </div>
+        <button class="gate-btn" id="gateSubmit">
+          🔓 Daftar & Masuk Etalase
+        </button>
+        <a
+          class="gate-wa"
+          id="gateWaLink"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          💬 WhatsApp Admin
+          <span class="small">Klik di sini untuk meminta kode akses web</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- APP -->
+  <div id="app">
+    <!-- NAV -->
+    <header>
+      <nav class="nav">
+        <div class="brand">
+          <div class="brand-logo">K</div>
+          <div class="brand-text">
+            <span>Karanjang</span>
+            <span>Etalase Animasi Produk Hijau</span>
+          </div>
+        </div>
+        <div class="cart-wrapper">
+          <div class="cart-label">Keranjang Kamu</div>
+          <div class="cart" id="cart">
+            <div class="cart-count" id="cartCount">0</div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div>
+        <div class="hero-tag">
+          <span>✨ Etalase Animasi Karanjang</span>
+          <span>klik & beli tanpa ribet</span>
+        </div>
+        <h1>Lihat Produk, Klik Beli, Semua Serba Hijau Putih.</h1>
+        <p>
+          Etalase ini hanya untuk member terverifikasi. Semua produk punya harga jelas,
+          deskripsi singkat, dan pembayaran mudah melalui QRIS, BRI, dan E-Wallet.
+        </p>
+      </div>
+      <div class="hero-right">
+        <div class="hero-pill">
+          <div class="hero-pill-title">Animasi Keranjang Hidup</div>
+          <p>Setiap klik beli bikin ikon keranjang "loncat" sebagai tanda item masuk.</p>
+        </div>
+        <div class="hero-pill">
+          <div class="hero-pill-title">Akses Terbatas & Aman</div>
+          <p>Login dengan kode dari Admin menjaga etalase tetap eksklusif & terkontrol.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT SECTION -->
+    <main class="content">
+      <div class="section-title">
+        <h2>Pilihan Produk Karanjang</h2>
+        <span>Klik “Beli Sekarang” untuk menambah ke keranjang</span>
+      </div>
+
+      <div class="product-grid">
+        <div class="product-card">
+          <div class="product-label">Best Seller</div>
+          <div class="product-name">Green Matcha Latte 250ml</div>
+          <div class="product-desc">
+            Minuman matcha segar dengan susu premium, manis seimbang. Cocok untuk temani kerja dan belajar.
+          </div>
+          <div class="product-price">
+            Rp25.000
+            <span>Rp29.000</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-view">👁 Lihat detail</button>
+            <button class="btn-buy" data-name="Green Matcha Latte 250ml" data-price="25000">
+              <span class="icon">🛒</span> Beli Sekarang
+            </button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-label">New</div>
+          <div class="product-name">Tote Bag Karanjang Eco</div>
+          <div class="product-desc">
+            Tas kain hijau-putih lipat, kuat, reusable. Desain minimalis untuk belanja harian tanpa plastik.
+          </div>
+          <div class="product-price">
+            Rp35.000
+          </div>
+          <div class="product-actions">
+            <button class="btn-view">👁 Lihat detail</button>
+            <button class="btn-buy" data-name="Tote Bag Karanjang Eco" data-price="35000">
+              <span class="icon">🛒</span> Beli Sekarang
+            </button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-label">Paket Hemat</div>
+          <div class="product-name">Bundle Snack Hijau Sehat</div>
+          <div class="product-desc">
+            Paket 3 snack rendah minyak: keripik sayur, kacang oven, dan granola matcha.
+            Cocok untuk ngemil tanpa rasa bersalah.
+          </div>
+          <div class="product-price">
+            Rp49.000
+            <span>Rp59.000</span>
+          </div>
+          <div class="product-actions">
+            <button class="btn-view">👁 Lihat detail</button>
+            <button class="btn-buy" data-name="Bundle Snack Hijau Sehat" data-price="49000">
+              <span class="icon">🛒</span> Beli Sekarang
+            </button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-label">Limited</div>
+          <div class="product-name">Botol Minum Stainless Green 600ml</div>
+          <div class="product-desc">
+            Botol hijau elegan, menjaga suhu panas/dingin lebih lama. Cocok untuk kerja, kampus, dan olahraga.
+          </div>
+          <div class="product-price">
+            Rp79.000
+          </div>
+          <div class="product-actions">
+            <button class="btn-view">👁 Lihat detail</button>
+            <button class="btn-buy" data-name="Botol Minum Stainless Green 600ml" data-price="79000">
+              <span class="icon">🛒</span> Beli Sekarang
+            </button>
+          </div>
+        </div>
+
+        <div class="product-card">
+          <div class="product-label">Rekomendasi</div>
+          <div class="product-name">Kaos Karanjang Fresh Green</div>
+          <div class="product-desc">
+            Kaos unisex warna hijau-putih, bahan cotton combed lembut, nyaman dipakai santai atau event brand.
+          </div>
+          <div class="product-price">
+            Rp99.000
+          </div>
+          <div class="product-actions">
+            <button class="btn-view">👁 Lihat detail</button>
+            <button class="btn-buy" data-name="Kaos Karanjang Fresh Green" data-price="99000">
+              <span class="icon">🛒</span> Beli Sekarang
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- TOAST -->
+    <div class="toast" id="toast">
+      <span>✅</span>
+      <span id="toastText">Produk ditambahkan ke Karanjang.</span>
+    </div>
+
+    <!-- CHECKOUT BAR -->
+    <div class="checkout-bar" id="checkoutBar">
+      <span class="label">Karanjang & Pembayaran</span>
+      <span class="total" id="checkoutTotal">Rp0</span>
+      <span class="cta">Checkout</span>
+    </div>
+
+    <!-- CHECKOUT MODAL -->
+    <div class="modal-backdrop" id="checkoutModal">
+      <div class="modal">
+        <div class="modal-header">
+          <div>
+            <div class="modal-title">Checkout Karanjang</div>
+            <div class="modal-sub">Ringkasan belanja & pilih metode pembayaran.</div>
+          </div>
+          <button class="modal-close" id="closeModal">&times;</button>
+        </div>
+
+        <div class="cart-items" id="cartItems">
+          <div class="cart-empty">Belum ada produk di Karanjang.</div>
+        </div>
+        <div class="cart-total">
+          <span>Total Pembayaran</span>
+          <span id="modalTotal">Rp0</span>
+        </div>
+
+        <div class="payment-section">
+          <div class="payment-label">Metode Pembayaran</div>
+          <div class="payment-options">
+            <div class="payment-option active" data-method="qris" id="optQRIS">
+              <span class="title">QRIS</span>
+              <span class="desc">Scan QR untuk bayar instan.</span>
+            </div>
+            <div class="payment-option" data-method="bri" id="optBRI">
+              <span class="title">Transfer BRI</span>
+              <span class="desc">Transfer via ATM / BRImo.</span>
+            </div>
+            <div class="payment-option" data-method="ewallet" id="optEWallet">
+              <span class="title">E-Wallet</span>
+              <span class="desc">GoPay / DANA / OVO.</span>
+            </div>
+          </div>
+
+          <div class="payment-detail show" id="detailQRIS">
+            <strong>QRIS Karanjang</strong>
+            <div class="qris-box">
+              Ganti kotak ini dengan gambar QRIS resmi tokomu.<br />
+              Contoh:
+              <br />&lt;img src="qris-anda.png" alt="QRIS" style="width:100%;border-radius:10px;" /&gt;
+            </div>
+          </div>
+
+          <div class="payment-detail" id="detailBRI">
+            <strong>Transfer Bank BRI</strong>
+            <div>Nomor Rekening: <span id="briRek">1234 56 789012 3</span></div>
+            <div>Atas Nama: <span id="briName">Karanjang Store</span></div>
+            <div class="copy-text" id="copyRek">Salin No. Rekening</div>
+          </div>
+
+          <div class="payment-detail" id="detailEWallet">
+            <strong>Transfer E-Wallet</strong>
+            <div>GoPay : <span class="ew-num">085182359268</span></div>
+            <div>DANA  : <span class="ew-num">085182359268</span></div>
+            <div>OVO   : <span class="ew-num">085182359268</span></div>
+            <div class="copy-text" id="copyEw">Salin Nomor E-Wallet</div>
+          </div>
+
+          <div class="confirm-note">
+            Harap <strong>screenshot saat anda melakukan pembayaran</strong>
+            agar admin dapat menanggapi dan memproses pesanan lebih cepat.
+          </div>
+          <button class="wa-confirm-btn" id="waConfirmBtn">
+            💬 Konfirmasi via WhatsApp Admin
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPT -->
+  <script>
+    // LOGIN GATE
+    const gate = document.getElementById("gate");
+    const app = document.getElementById("app");
+    const gateName = document.getElementById("gateName");
+    const gateWa = document.getElementById("gateWa");
+    const gateCode = document.getElementById("gateCode");
+    const gateSubmit = document.getElementById("gateSubmit");
+    const gateError = document.getElementById("gateError");
+    const gateWaLink = document.getElementById("gateWaLink");
+    const loginSuccess = document.getElementById("loginSuccess");
+
+    const ACCESS_CODE = "nayoncantik10";
+    const ADMIN_WA_NUMBER = "6285182359268";
+
+    gateWaLink.href =
+      "https://wa.me/" +
+      ADMIN_WA_NUMBER +
+      "?text=" +
+      encodeURIComponent("Halo Admin, saya ingin meminta kode akses web Karanjang.");
+
+    function showLoginSuccess() {
+      loginSuccess.classList.add("show");
+      setTimeout(() => {
+        loginSuccess.classList.remove("show");
+      }, 2300);
+    }
+
+    function unlockApp() {
+      gate.style.display = "none";
+      app.style.display = "block";
+      localStorage.setItem("karanjangAccess", "1");
+      showLoginSuccess();
+    }
+
+    // Auto unlock jika sudah pernah login
+    if (localStorage.getItem("karanjangAccess") === "1") {
+      unlockApp();
+    }
+
+    gateSubmit.addEventListener("click", () => {
+      const name = gateName.value.trim();
+      const wa = gateWa.value.trim();
+      const code = gateCode.value.trim();
+
+      if (!name || !wa || !code || code !== ACCESS_CODE) {
+        gateError.style.display = "block";
+        return;
+      }
+      gateError.style.display = "none";
+      unlockApp();
+    });
+
+    // APP LOGIC
+    const cart = document.getElementById("cart");
+    const cartCount = document.getElementById("cartCount");
+    const toast = document.getElementById("toast");
+    const toastText = document.getElementById("toastText");
+    const checkoutBar = document.getElementById("checkoutBar");
+    const checkoutModal = document.getElementById("checkoutModal");
+    const closeModalBtn = document.getElementById("closeModal");
+    const cartItemsContainer = document.getElementById("cartItems");
+    const checkoutTotal = document.getElementById("checkoutTotal");
+    const modalTotal = document.getElementById("modalTotal");
+
+    const optQRIS = document.getElementById("optQRIS");
+    const optBRI = document.getElementById("optBRI");
+    const optEWallet = document.getElementById("optEWallet");
+    const detailQRIS = document.getElementById("detailQRIS");
+    const detailBRI = document.getElementById("detailBRI");
+    const detailEWallet = document.getElementById("detailEWallet");
+    const copyRek = document.getElementById("copyRek");
+    const briRek = document.getElementById("briRek");
+    const copyEw = document.getElementById("copyEw");
+    const waConfirmBtn = document.getElementById("waConfirmBtn");
+
+    let count = 0;
+    let cartItems = [];
+
+    function formatRupiah(num) {
+      return "Rp" + Number(num).toLocaleString("id-ID");
+    }
+
+    function showToast(message) {
+      toastText.textContent = message;
+      toast.classList.add("show");
+      setTimeout(() => {
+        toast.classList.remove("show");
+      }, 1600);
+    }
+
+    function animateCart() {
+      if (!cart) return;
+      cart.classList.remove("animate");
+      void cart.offsetWidth;
+      cart.classList.add("animate");
+    }
+
+    function updateCheckoutUI() {
+      const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+      checkoutTotal.textContent = formatRupiah(total);
+      modalTotal.textContent = formatRupiah(total);
+
+      cartItemsContainer.innerHTML = "";
+      if (cartItems.length === 0) {
+        cartItemsContainer.innerHTML =
+          '<div class="cart-empty">Belum ada produk di Karanjang.</div>';
+        return;
+      }
+      cartItems.forEach((item) => {
+        const row = document.createElement("div");
+        row.className = "cart-item-row";
+        row.innerHTML =
+          '<div class="cart-item-name">' +
+          item.name +
+          "</div><div class='cart-item-price'>" +
+          formatRupiah(item.price) +
+          "</div>";
+        cartItemsContainer.appendChild(row);
+      });
+    }
+
+    document.querySelectorAll(".btn-buy").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const name = btn.getAttribute("data-name");
+        const price = Number(btn.getAttribute("data-price"));
+        count++;
+        cartCount.textContent = count;
+        cartItems.push({ name, price });
+        animateCart();
+        updateCheckoutUI();
+        showToast(name + " (" + formatRupiah(price) + ") masuk ke Karanjang");
+      });
+    });
+
+    document.querySelectorAll(".btn-view").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const card = btn.closest(".product-card");
+        const name = card.querySelector(".product-name").textContent.trim();
+        const desc = card.querySelector(".product-desc").textContent.trim();
+        const price = card.querySelector(".product-price").childNodes[0].textContent.trim();
+        alert(name + "\n" + price + "\n\n" + desc);
+      });
+    });
+
+    checkoutBar.addEventListener("click", () => {
+      checkoutModal.classList.add("show");
+    });
+
+    cart.addEventListener("click", () => {
+      checkoutModal.classList.add("show");
+    });
+
+    closeModalBtn.addEventListener("click", () => {
+      checkoutModal.classList.remove("show");
+    });
+
+    checkoutModal.addEventListener("click", (e) => {
+      if (e.target === checkoutModal) {
+        checkoutModal.classList.remove("show");
+      }
+    });
+
+    function selectPayment(method) {
+      optQRIS.classList.remove("active");
+      optBRI.classList.remove("active");
+      optEWallet.classList.remove("active");
+      detailQRIS.classList.remove("show");
+      detailBRI.classList.remove("show");
+      detailEWallet.classList.remove("show");
+
+      if (method === "qris") {
+        optQRIS.classList.add("active");
+        detailQRIS.classList.add("show");
+      } else if (method === "bri") {
+        optBRI.classList.add("active");
+        detailBRI.classList.add("show");
+      } else if (method === "ewallet") {
+        optEWallet.classList.add("active");
+        detailEWallet.classList.add("show");
+      }
+    }
+
+    optQRIS.addEventListener("click", () => selectPayment("qris"));
+    optBRI.addEventListener("click", () => selectPayment("bri"));
+    optEWallet.addEventListener("click", () => selectPayment("ewallet"));
+
+    copyRek.addEventListener("click", () => {
+      const text = briRek.textContent.replace(/\s+/g, " ").trim();
+      navigator.clipboard.writeText(text)
+        .then(() => showToast("Nomor rekening BRI tersalin."))
+        .catch(() => showToast("Gagal menyalin. Salin manual ya."));
+    });
+
+    copyEw.addEventListener("click", () => {
+      const text = "085182359268";
+      navigator.clipboard.writeText(text)
+        .then(() => showToast("Nomor E-Wallet tersalin."))
+        .catch(() => showToast("Gagal menyalin. Salin manual ya."));
+    });
+
+    waConfirmBtn.addEventListener("click", () => {
+      const total = cartItems.reduce((sum, item) => sum + item.price, 0);
+      const listProduk = cartItems
+        .map((i, idx) => `${idx + 1}. ${i.name} - ${formatRupiah(i.price)}`)
+        .join("%0A");
+      const text =
+        "Halo Admin, saya ingin konfirmasi pembayaran.%0A%0A" +
+        "Detail Pesanan:%0A" +
+        (listProduk || "-") +
+        "%0A%0ATotal: " +
+        formatRupiah(total) +
+        "%0ASaya sudah melakukan pembayaran (QRIS/BRI/E-Wallet). " +
+        "Saya akan kirim screenshot bukti pembayaran.";
+      const url = `https://wa.me/${ADMIN_WA_NUMBER}?text=${text}`;
+      window.open(url, "_blank");
+    });
+
+    updateCheckoutUI();
+  </script>
+</body>
+</html>

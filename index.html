@@ -1147,9 +1147,18 @@
 
           <div class="payment-detail show" id="detailQRIS">
   <strong>QRIS NAYOON</strong>
-  <div class="qris-box">
+  .qris-box {
+  width: 100%;
+  aspect-ratio: 1 / 1;        /* tetap kotak 1:1 */
+  border-radius: 10px;
+  border: 1px dashed rgba(0, 0, 0, 0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+}
     <!-- Gambar QRIS -->
-    <img src="IMG_2053.jpeg" alt="QRIS NAYOON" class="qris-img">
+    <img src="IMG_2053.jpeg" alt="QRIS NAYOON" class="IMG_2053.jpeg">
   </div>
 
   <!-- Teks panduan -->
